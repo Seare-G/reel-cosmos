@@ -2,23 +2,15 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MovieCard from "./MovieCard";
 import { useState } from "react";
-
-interface Movie {
-  id: number;
-  title: string;
-  image: string;
-  year: string;
-  genre: string;
-  rating: string;
-  duration: string;
-}
+import { Movie } from "@/hooks/useMovies";
 
 interface MovieRowProps {
   title: string;
   movies: Movie[];
+  profileId?: string;
 }
 
-const MovieRow = ({ title, movies }: MovieRowProps) => {
+const MovieRow = ({ title, movies, profileId }: MovieRowProps) => {
   const [scrollPosition, setScrollPosition] = useState(0);
 
   const scroll = (direction: 'left' | 'right') => {
@@ -57,12 +49,8 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
         {movies.map((movie) => (
           <div key={movie.id} className="flex-none w-64 md:w-80">
             <MovieCard
-              title={movie.title}
-              image={movie.image}
-              year={movie.year}
-              genre={movie.genre}
-              rating={movie.rating}
-              duration={movie.duration}
+              movie={movie}
+              profileId={profileId}
             />
           </div>
         ))}

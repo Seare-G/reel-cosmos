@@ -1,9 +1,11 @@
 import { Play, Info, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useFeaturedMovie } from "@/hooks/useMovies";
 
 const HeroBanner = () => {
   const [isMuted, setIsMuted] = useState(true);
+  const { data: featuredMovie } = useFeaturedMovie();
 
   return (
     <section className="relative h-screen flex items-center justify-start">
@@ -11,7 +13,7 @@ const HeroBanner = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1489599732871-42852138d8ac?w=1920&h=1080&fit=crop&crop=entropy&auto=format&q=80')"
+          backgroundImage: `url('${featuredMovie?.backdrop_url || "https://images.unsplash.com/photo-1489599732871-42852138d8ac?w=1920&h=1080&fit=crop&crop=entropy&auto=format&q=80"}')`
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
@@ -22,10 +24,10 @@ const HeroBanner = () => {
       <div className="relative z-10 container mx-auto px-4 max-w-2xl">
         <div className="space-y-6">
           <h1 className="text-5xl md:text-7xl font-bold text-foreground leading-tight">
-            Stranger Things
+            {featuredMovie?.title || "Stranger Things"}
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-lg">
-            When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.
+            {featuredMovie?.description || "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl."}
           </p>
           
           <div className="flex items-center space-x-4">
@@ -40,12 +42,17 @@ const HeroBanner = () => {
           </div>
 
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <span className="bg-primary px-2 py-1 text-primary-foreground rounded">2016</span>
-            <span>4 Seasons</span>
-            <span>•</span>
-            <span>Sci-Fi</span>
-            <span>•</span>
-            <span>Drama</span>
+            {featuredMovie?.year && (
+              <span className="bg-primary px-2 py-1 text-primary-foreground rounded">
+                {featuredMovie.year}
+              </span>
+            )}
+            {featuredMovie?.runtime && <span>{featuredMovie.runtime}m</span>}
+            {featuredMovie?.genre?.map((g, index) => (
+              <span key={g}>
+                {index > 0 && "•"} {g}
+              </span>
+            ))}
           </div>
         </div>
       </div>
