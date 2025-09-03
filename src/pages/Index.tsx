@@ -1,28 +1,27 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
-import HeroBanner from "@/components/HeroBanner";
-import TMDBMovieRow from "@/components/TMDBMovieRow";
-import Profiles from "@/pages/Profiles";
-import Landing from "@/pages/Landing";
-import { useAuth } from "@/contexts/AuthContext";
-import { useTrendingMovies, usePopularMovies, useTopRatedMovies } from "@/hooks/useTMDBMovies";
-import { useUserProfiles, UserProfile } from "@/hooks/useProfiles";
+import { useState, useEffect } from 'react';
+import Header from '@/components/Header';
+import HeroBanner from '@/components/HeroBanner';
+import TMDBMovieRow from '@/components/TMDBMovieRow';
+import Profiles from '@/pages/Profiles';
+import Landing from '@/pages/Landing';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  useTrendingMovies,
+  usePopularMovies,
+  useTopRatedMovies,
+} from '@/hooks/useTMDBMovies';
+import { useUserProfiles, UserProfile } from '@/hooks/useProfiles';
 
 const Index = () => {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
-  const [selectedProfile, setSelectedProfile] = useState<UserProfile | null>(null);
-  
+  const [selectedProfile, setSelectedProfile] = useState<UserProfile | null>(
+    null
+  );
+
   const { data: profiles = [] } = useUserProfiles();
   const { data: trendingMovies = [] } = useTrendingMovies();
-  const { data: popularMovies = [] } = usePopularMovies();  
+  const { data: popularMovies = [] } = usePopularMovies();
   const { data: topRatedMovies = [] } = useTopRatedMovies();
-
-  // Show landing page for unauthenticated users
-  if (!loading && !user) {
-    return <Landing />;
-  }
 
   useEffect(() => {
     // Auto-select profile if user has only one
@@ -42,8 +41,9 @@ const Index = () => {
     );
   }
 
+  // Show landing page for unauthenticated users
   if (!user) {
-    return null;
+    return <Landing />;
   }
 
   // Show profiles selection if no profile is selected
@@ -53,14 +53,29 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header profile={selectedProfile} onProfileChange={() => setSelectedProfile(null)} />
+      <Header
+        profile={selectedProfile}
+        onProfileChange={() => setSelectedProfile(null)}
+      />
       <main>
         <HeroBanner />
-        
+
         <div className="space-y-12 pb-20">
-          <TMDBMovieRow title="Trending Now" movies={trendingMovies} profileId={selectedProfile.id} />
-          <TMDBMovieRow title="Popular Movies" movies={popularMovies} profileId={selectedProfile.id} />
-          <TMDBMovieRow title="Top Rated" movies={topRatedMovies} profileId={selectedProfile.id} />
+          <TMDBMovieRow
+            title="Trending Now"
+            movies={trendingMovies}
+            profileId={selectedProfile.id}
+          />
+          <TMDBMovieRow
+            title="Popular Movies"
+            movies={popularMovies}
+            profileId={selectedProfile.id}
+          />
+          <TMDBMovieRow
+            title="Top Rated"
+            movies={topRatedMovies}
+            profileId={selectedProfile.id}
+          />
         </div>
       </main>
     </div>
