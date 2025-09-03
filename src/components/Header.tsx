@@ -1,9 +1,16 @@
-import { Search, Bell, User, LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useAuth } from "@/contexts/AuthContext";
-import { UserProfile } from "@/hooks/useProfiles";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { Search, Bell, User, LogOut } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { UserProfile } from '@/hooks/useProfiles';
 
 interface HeaderProps {
   profile?: UserProfile;
@@ -12,6 +19,15 @@ interface HeaderProps {
 
 const Header = ({ profile, onProfileChange }: HeaderProps) => {
   const { signOut } = useAuth();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -23,24 +39,25 @@ const Header = ({ profile, onProfileChange }: HeaderProps) => {
         {/* Logo */}
         <div className="flex items-center space-x-8">
           <h1 className="text-2xl font-bold text-primary">CINEMIX</h1>
-          <nav className="hidden md:flex space-x-6">
-            <button className="text-foreground hover:text-primary transition-colors">Home</button>
-            <button className="text-muted-foreground hover:text-primary transition-colors">TV Shows</button>
-            <button className="text-muted-foreground hover:text-primary transition-colors">Movies</button>
-            <button className="text-muted-foreground hover:text-primary transition-colors">New & Popular</button>
-            <button className="text-muted-foreground hover:text-primary transition-colors">My List</button>
+          <nav className="hidden md:flex items-center space-x-6">
+            <Link to="/" className="text-foreground hover:text-primary transition-colors">Home</Link>
+            <Link to="/my-list" className="text-muted-foreground hover:text-primary transition-colors">My List</Link>
+            <Link to="/search" className="text-muted-foreground hover:text-primary transition-colors">Browse</Link>
           </nav>
         </div>
 
         {/* Right side */}
         <div className="flex items-center space-x-4">
-          <div className="relative hidden md:block">
+          <form onSubmit={handleSearch} className="relative hidden md:block">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input 
-              placeholder="Search titles, people, genres" 
-              className="pl-10 w-64 bg-secondary border-0 focus:ring-1 focus:ring-primary"
+              type="text"
+              placeholder="Search movies..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 w-64 bg-card/50 border-border focus:border-primary"
             />
-          </div>
+          </form>
           <Button variant="ghost" size="icon">
             <Bell className="h-5 w-5" />
           </Button>
